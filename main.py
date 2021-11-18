@@ -24,27 +24,28 @@ def get_age_of_winery():
     return result
 
 
-def get_wines_categories(filepath):
+def get_drinks_by_categories(filepath):
     drinks_from_excel = pandas.read_excel(
         filepath, na_values=['N/A', 'NA', 'NaN', 'nan'], keep_default_na=False)
     drinks_info = drinks_from_excel.to_dict('records')
-    wines_by_categories = collections.defaultdict(list)
+    drinks_by_categories = collections.defaultdict(list)
     for drink in drinks_info:
         category = drink['Категория']
-        wines_by_categories[category].append(drink)
-    return wines_by_categories
+        drinks_by_categories[category].append(drink)
+    drinks_sorted_by_categories = collections.OrderedDict(
+        sorted(drinks_by_categories.items()))
+    return drinks_sorted_by_categories.items()
 
 
 if __name__ == '__main__':
-    wines = get_wines_categories('wine2.xlsx')
-    pprint(wines)
     env = Environment(loader=FileSystemLoader('.'),
-                      autoescape=select_autoescape(['html', 'xml']))
+                      autoescape=select_autoescape(['html', 'xml'])
+                      )
     template = env.get_template('template.html')
     rendered_page = template.render(
         age_of_winery=get_age_of_winery(),
-        wines=wines
-    )
+        drinks_by_categories=get_drinks_by_categories('wine2.xlsx')
+        )
     with open('index.html', 'w', encoding="utf8") as file:
         file.write(rendered_page)
     server = HTTPServer(('0.0.0.0', 8000), SimpleHTTPRequestHandler)
