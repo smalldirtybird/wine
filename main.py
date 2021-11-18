@@ -44,7 +44,7 @@ if __name__ == '__main__':
     template = env.get_template('template.html')
     rendered_page = template.render(
         age_of_winery=get_age_of_winery(),
-        drinks_by_categories=get_drinks_by_categories('wine2.xlsx')
+        drinks_by_categories=get_drinks_by_categories('wine3.xlsx')
         )
     with open('index.html', 'w', encoding="utf8") as file:
         file.write(rendered_page)
