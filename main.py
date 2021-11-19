@@ -3,17 +3,15 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 import datetime
 import pandas
 import collections
-from pprint import pprint
 
 
 def get_word_type_of_age(age):
-    if age[-2] == '1' or age[-1] in ['5', '6', '7', '8', '9']:
-        result = 'лет'
-    elif age[-1] == '1':
-        result = 'год'
+    if int(age[-2]) == 1 or int(age[-1]) in range(5, 10):
+        return 'лет'
+    elif int(age[-1]) == 1:
+        return 'год'
     else:
-        result = 'года'
-    return result
+        return 'года'
 
 
 def get_age_of_winery():
