@@ -3,6 +3,9 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 import datetime
 import pandas
 import collections
+import argparse
+import os
+from dotenv import load_dotenv
 
 
 def get_word_type_of_age(age):
@@ -35,14 +38,26 @@ def get_drinks_by_categories(filepath):
     return drinks_sorted_by_categories.items()
 
 
+def get_filepath():
+    load_dotenv()
+    parser = argparse.ArgumentParser(
+        description='Шаблон для верстки сайта магазина элитных винных напитков')
+    parser.add_argument(
+        '-f', '--filepath', default=os.environ['DRINKS_ASSORTMENT_FILE'],
+        help='Путь к файлу с данными ассортимента напитков')
+    args = parser.parse_args()
+    return args.filepath
+
+
 if __name__ == '__main__':
     env = Environment(loader=FileSystemLoader('.'),
                       autoescape=select_autoescape(['html', 'xml'])
                       )
     template = env.get_template('template.html')
+    filepath = os.path.join(get_filepath())
     rendered_page = template.render(
         age_of_winery=get_age_of_winery(),
-        drinks_by_categories=get_drinks_by_categories('wine3.xlsx')
+        drinks_by_categories=get_drinks_by_categories(filepath)
         )
     with open('index.html', 'w', encoding="utf8") as file:
         file.write(rendered_page)
